@@ -1,6 +1,5 @@
 package com.example.todoapi.security;
 
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -13,15 +12,18 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
-@EnableWebSecurity
+@Configuration
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST, "/register")
+                    .permitAll()
                 .requestMatchers(HttpMethod.GET, "/todos/**")
                     .permitAll()
                 .anyRequest()
@@ -43,7 +45,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler(logoutSuccessHandler())
             .and()
             .csrf()
-                .ignoringRequestMatchers("/login")
+                .ignoringRequestMatchers("/login", "/register")
                 .csrfTokenRepository(csrfTokenRepository());
 
         return http.build();
