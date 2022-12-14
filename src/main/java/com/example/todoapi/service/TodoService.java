@@ -1,6 +1,7 @@
 package com.example.todoapi.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class TodoService {
     }
 
     @Transactional(readOnly = true)
-    public Todo findById(Integer id) {
-        Todo todo = repository.findById(id).get();
+    public Optional<Todo> findById(Integer id) {
+        Optional<Todo> todo = repository.findById(id);
         return todo;
     }
 
@@ -33,10 +34,10 @@ public class TodoService {
     }
 
     @Transactional
-    public Todo update(Integer id, Todo todo) {
-        Todo updatedTodo = repository.findById(id).get();
-        updatedTodo.setTitle(todo.getTitle());
-        return updatedTodo;
+    public Optional<Todo> update(Integer id, Todo todo) {
+        Optional<Todo> updatedTodoOpt = repository.findById(id);
+        updatedTodoOpt.ifPresent(updatedTodo -> updatedTodo.setTitle(todo.getTitle()));
+        return updatedTodoOpt;
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.example.todoapi.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.example.todoapi.service.TodoService;
 import com.example.todoapi.entity.Todo;
@@ -28,9 +30,9 @@ public class TodoController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public Todo getTodo(@PathVariable Integer id) {
-        Todo todo = todoService.findById(id);
-        return todo;
+    public ResponseEntity<Todo> getTodo(@PathVariable Integer id) {
+        Optional<Todo> todo = todoService.findById(id);
+        return todo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -41,9 +43,9 @@ public class TodoController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-    public Todo updateTodo(@PathVariable Integer id, @Validated @RequestBody Todo todo) {
-        Todo updatedTodo = todoService.update(id, todo);
-        return updatedTodo;
+    public ResponseEntity<Todo> updateTodo(@PathVariable Integer id, @Validated @RequestBody Todo todo) {
+        Optional<Todo> updatedTodo = todoService.update(id, todo);
+        return updatedTodo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
