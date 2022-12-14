@@ -45,8 +45,9 @@ public class SecurityConfig {
                 .logoutSuccessHandler(logoutSuccessHandler())
             .and()
             .csrf()
-                .ignoringRequestMatchers("/login", "/register")
-                .csrfTokenRepository(csrfTokenRepository());
+                .disable();
+                // .ignoringRequestMatchers("/login", "/register")
+                // .csrfTokenRepository(csrfTokenRepository());
 
         return http.build();
     }
