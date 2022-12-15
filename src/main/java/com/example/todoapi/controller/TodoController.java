@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.todoapi.service.TodoService;
 import com.example.todoapi.entity.Todo;
+import com.example.todoapi.resource.TodoResource;
 
 @RestController
 @RequestMapping("/todos")
@@ -24,22 +27,24 @@ public class TodoController {
     TodoService todoService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Todo> getAllTodos() {
+    public List<TodoResource> getAllTodos() {
         List<Todo> todos = todoService.findAll();
-        return todos;
+        return todos.stream().map(TodoResource::new).toList();
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Todo> getTodo(@PathVariable Integer id) {
+    public ResponseEntity<TodoResource> getTodo(@PathVariable Integer id) {
         Optional<Todo> todo = todoService.findById(id);
-        return todo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return todo.map(TodoResource::new).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Todo createTodo(@Validated @RequestBody Todo todo) {
-        Todo createdTodo = todoService.create(todo);
-        return createdTodo;
+    public TodoResource createTodo(@Validated @RequestBody TodoResource todoResource, @AuthenticationPrincipal UserDetails userDetails) {
+        Todo todo = new Todo(todoResource.getTitle());
+        String userId = userDetails.getUsername();
+        Todo createdTodo = todoService.create(todo, userId);
+        return new TodoResource(createdTodo);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)

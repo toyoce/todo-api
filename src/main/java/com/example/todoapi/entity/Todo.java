@@ -6,6 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,6 +22,10 @@ public class Todo implements Serializable {
 
     @Column(name = "title", length = 50, nullable = false)
     private String title;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userId")
+    private User user;
 
     protected Todo() {}
 
@@ -43,5 +49,11 @@ public class Todo implements Serializable {
         this.title = title;
     }
 
-    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
