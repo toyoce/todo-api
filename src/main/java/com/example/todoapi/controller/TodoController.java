@@ -48,9 +48,10 @@ public class TodoController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Todo> updateTodo(@PathVariable Integer id, @Validated @RequestBody Todo todo) {
+    public ResponseEntity<TodoResource> updateTodo(@PathVariable Integer id, @Validated @RequestBody TodoResource todoResource) {
+        Todo todo = new Todo(todoResource.getTitle());
         Optional<Todo> updatedTodo = todoService.update(id, todo);
-        return updatedTodo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return updatedTodo.map(TodoResource::new).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
