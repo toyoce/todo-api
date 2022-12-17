@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.example.todoapi.service.UserService;
 import com.example.todoapi.entity.User;
+import com.example.todoapi.resource.MessageResource;
 
 @RestController
 @RequestMapping("/register")
@@ -20,7 +21,8 @@ public class UserRegisterController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@Validated @RequestBody User user) {
+    public MessageResource registerUser(@Validated @RequestBody User user) {
         userService.create(user);
+        return new MessageResource("Successfully registered");
     }
 }
