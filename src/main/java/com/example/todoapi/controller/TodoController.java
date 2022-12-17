@@ -41,7 +41,8 @@ public class TodoController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public TodoResource createTodo(@Validated @RequestBody TodoRequestResource todoRequestResource, @AuthenticationPrincipal UserDetails userDetails) {
+    public TodoResource createTodo(@Validated @RequestBody TodoRequestResource todoRequestResource,
+            @AuthenticationPrincipal UserDetails userDetails) {
         Todo todo = new Todo(todoRequestResource.getTitle());
         String userId = userDetails.getUsername();
         Todo createdTodo = todoService.create(todo, userId);
@@ -49,10 +50,12 @@ public class TodoController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<TodoResource> updateTodo(@PathVariable Integer id, @Validated @RequestBody TodoRequestResource todoRequestResource) {
+    public ResponseEntity<TodoResource> updateTodo(@PathVariable Integer id,
+            @Validated @RequestBody TodoRequestResource todoRequestResource) {
         Todo todo = new Todo(todoRequestResource.getTitle());
         Optional<Todo> updatedTodo = todoService.update(id, todo);
-        return updatedTodo.map(TodoResource::new).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return updatedTodo.map(TodoResource::new).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
