@@ -2,6 +2,7 @@ package com.example.todoapi.controller;
 
 import static org.mockito.Mockito.doReturn;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -45,5 +46,24 @@ public class TodoControllerTest {
             .andExpect(jsonPath("$.id").value(1))
             .andExpect(jsonPath("$.title").value("服を買う"))
             .andExpect(jsonPath("$.userId").value("tanaka"));
+    }
+
+    @Test
+    public void shoudReturnAllTodosWithStatusOk() throws Exception {
+        User user1 = new User("tanaka", "password");
+        User user2 = new User("sasaki", "password");
+        Todo todo1 = new Todo(1, "服を買う", user1);
+        Todo todo2 = new Todo(11, "部屋を片付ける", user2);
+        Todo todo3 = new Todo(21, "ブログを書く", user2);
+        List<Todo> todos = List.of(todo1, todo2, todo3);
+        doReturn(todos).when(todoService).findAll();
+
+        this.mockMvc.perform(get("/todos"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.length()").value(3))
+            .andExpect(jsonPath("$[2].id").value(21))
+            .andExpect(jsonPath("$[2].title").value("ブログを書く"))
+            .andExpect(jsonPath("$[2].userId").value("sasaki"));
     }
 }
