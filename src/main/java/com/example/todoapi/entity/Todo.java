@@ -33,6 +33,12 @@ public class Todo implements Serializable {
         this.title = title;
     }
 
+    public Todo(Integer id, String title, User user) {
+        this.id = id;
+        this.title = title;
+        this.user = user;
+    }
+
     public Integer getId() {
         return id;
     }
